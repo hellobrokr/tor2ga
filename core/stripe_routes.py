@@ -35,12 +35,20 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator
-from stripe.error import (
-    CardError,
-    InvalidRequestError,
-    SignatureVerificationError,
-    StripeError,
-)
+try:
+    from stripe.error import (
+        CardError,
+        InvalidRequestError,
+        SignatureVerificationError,
+        StripeError,
+    )
+except ImportError:
+    from stripe import (
+        CardError,
+        InvalidRequestError,
+        SignatureVerificationError,
+        StripeError,
+    )
 
 import sys
 sys.path.insert(0, os.path.dirname(__file__))

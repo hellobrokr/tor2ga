@@ -34,15 +34,29 @@ import time
 from typing import Any, Dict, Optional
 
 import stripe
-from stripe.error import (
-    AuthenticationError,
-    CardError,
-    IdempotencyError,
-    InvalidRequestError,
-    RateLimitError,
-    SignatureVerificationError,
-    StripeError,
-)
+
+# stripe v15+ moved errors from stripe.error to stripe directly
+try:
+    from stripe.error import (
+        AuthenticationError,
+        CardError,
+        IdempotencyError,
+        InvalidRequestError,
+        RateLimitError,
+        SignatureVerificationError,
+        StripeError,
+    )
+except ImportError:
+    # stripe >= 15.x
+    from stripe import (
+        AuthenticationError,
+        CardError,
+        IdempotencyError,
+        InvalidRequestError,
+        RateLimitError,
+        SignatureVerificationError,
+        StripeError,
+    )
 
 # ---------------------------------------------------------------------------
 # Logger
