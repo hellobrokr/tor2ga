@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.db
+*.db-wal
+*.db-shm
+.DS_Store
+node_modules/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+.tor2ga/

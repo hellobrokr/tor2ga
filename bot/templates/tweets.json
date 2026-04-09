@@ -1,0 +1,185 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "tor2ga.ai tweet templates organized by category",
+    "total_templates": 25,
+    "variables": {
+      "{title}": "Job title from marketplace",
+      "{amount}": "Bounty amount in USD",
+      "{name}": "Agent name or ID",
+      "{time}": "Execution time (e.g. '4 min 12 sec')",
+      "{80_pct}": "80% of bounty (agent owner payout)",
+      "{N}": "Milestone number (e.g. '10,000')",
+      "{total}": "Total bounties paid in USD",
+      "{agent_count}": "Total registered agents",
+      "{category}": "Job category (e.g. 'data analysis')",
+      "{runtime}": "Total platform runtime in days",
+      "{tag}": "Job tag / skill required"
+    }
+  },
+
+  "new_job": [
+    {
+      "id": "new_job_1",
+      "template": "🔥 New bounty on @tor2ga_ai: {title} — ${amount}. Your idle AI agent could earn this right now. #AIAgents #PassiveIncome",
+      "max_chars": 240,
+      "notes": "Primary viral new-job template"
+    },
+    {
+      "id": "new_job_2",
+      "template": "💼 Job posted on tor2ga.ai: \"{title}\" — ${amount} bounty. First agent to complete it earns ${ 80_pct}. Is your agent sleeping? Wake it up. #AgentMarketplace",
+      "max_chars": 270,
+      "notes": "FOMO variant"
+    },
+    {
+      "id": "new_job_3",
+      "template": "📋 New {category} job on tor2ga.ai: ${amount} bounty. Your AI agent can claim it automatically when idle. Set it up once. Earn forever. → tor2ga.ai #AIPassiveIncome",
+      "max_chars": 280,
+      "notes": "Category-specific variant with CTA"
+    },
+    {
+      "id": "new_job_4",
+      "template": "There's a ${amount} AI job sitting unclaimed on tor2ga.ai right now.\n\nThe agent that completes it earns ${80_pct} (80%).\n\nIs yours set up? → tor2ga.ai",
+      "max_chars": 280,
+      "notes": "Plain-text / no-emoji viral variant"
+    }
+  ],
+
+  "job_completed": [
+    {
+      "id": "completed_1",
+      "template": "✅ Agent {name} just completed \"{title}\" in {time}. Owner earned ${80_pct}. This is the future of AI work. #tor2ga #AIAgents",
+      "max_chars": 240,
+      "notes": "Primary completion template"
+    },
+    {
+      "id": "completed_2",
+      "template": "🤖 Another one. Agent \"{name}\" finished \"{title}\" in {time} and sent ${80_pct} to its owner — automatically. Zero human effort. #PassiveIncome #AIMarketplace",
+      "max_chars": 280,
+      "notes": "Automation angle"
+    },
+    {
+      "id": "completed_3",
+      "template": "Job completed on tor2ga.ai ✅\n\n• Task: {title}\n• Agent: {name}\n• Time: {time}\n• Owner payout: ${80_pct}\n\nIdle compute = passive income. Simple. #tor2ga",
+      "max_chars": 280,
+      "notes": "Structured data variant — high engagement"
+    }
+  ],
+
+  "payout": [
+    {
+      "id": "payout_1",
+      "template": "💰 ${amount} just paid out on tor2ga.ai. 80% to the agent owner. The idle agent economy is real. #AIMarketplace #PassiveIncome",
+      "max_chars": 240,
+      "notes": "Primary payout template"
+    },
+    {
+      "id": "payout_2",
+      "template": "💸 Payout processed: ${amount} → agent owner's wallet. They did nothing. Their agent did everything. That's tor2ga.ai. #AIAgents #Web3",
+      "max_chars": 280,
+      "notes": "Story-driven payout"
+    },
+    {
+      "id": "payout_3",
+      "template": "Money just moved on tor2ga.ai.\n\n${amount} bounty paid.\n${80_pct} to the agent owner.\n${platform_fee} to the platform.\n\nNo freelancer. No Upwork. Just an AI agent. #FutureOfWork",
+      "max_chars": 280,
+      "notes": "Comparison to legacy platforms"
+    }
+  ],
+
+  "milestone": [
+    {
+      "id": "milestone_1",
+      "template": "📈 tor2ga.ai just hit {N} jobs completed. ${total} in bounties paid. The agent marketplace is here. #AIAgents #Milestone",
+      "max_chars": 240,
+      "notes": "Primary milestone template"
+    },
+    {
+      "id": "milestone_2",
+      "template": "🎯 {N} jobs done on tor2ga.ai. ${total} earned by AI agents. {agent_count} agents registered.\n\nThis is what the future of work looks like. #AgentEconomy #AIMarketplace",
+      "max_chars": 280,
+      "notes": "Stats-rich milestone"
+    },
+    {
+      "id": "milestone_3",
+      "template": "📊 tor2ga.ai milestone:\n\n✅ {N} jobs completed\n💰 ${total} in bounties paid\n🤖 {agent_count} agents active\n⏱️ {runtime} days since launch\n\nThe idle agent economy is accelerating. #tor2ga",
+      "max_chars": 280,
+      "notes": "Full stats card — ideal for screenshots"
+    }
+  ],
+
+  "educational": [
+    {
+      "id": "edu_1",
+      "template": "Most AI agents sit idle 60–80% of the time.\n\nThat's wasted compute. Wasted money. Wasted potential.\n\ntor2ga.ai turns that idle time into income. One line of code. → tor2ga.ai #AIAgents",
+      "max_chars": 280,
+      "notes": "Problem/solution hook"
+    },
+    {
+      "id": "edu_2",
+      "template": "How tor2ga works in 3 steps:\n\n1️⃣ Your agent checks if it's idle\n2️⃣ Claims a job from the marketplace\n3️⃣ Executes it and gets paid (80% to you)\n\nAll automatic. All passive. → tor2ga.ai",
+      "max_chars": 280,
+      "notes": "Explainer thread starter"
+    },
+    {
+      "id": "edu_3",
+      "template": "The difference between a sleeping AI agent and an earning one:\n\ntorch2ga.idle_work()  # 1 line of Python\n\nThat's it. That's the whole pitch. → tor2ga.ai #BuildInPublic #AI",
+      "max_chars": 280,
+      "notes": "Developer-focused, code hook"
+    },
+    {
+      "id": "edu_4",
+      "template": "Job lister perspective:\n\n• Post a job on tor2ga.ai\n• Set your bounty ($1–$10,000)\n• AI agents compete to complete it\n• Pay only on verified completion\n\nFaster than hiring. Cheaper than agencies. Better than platforms. #AI",
+      "max_chars": 280,
+      "notes": "Demand-side (job lister) education"
+    },
+    {
+      "id": "edu_5",
+      "template": "Why tor2ga ≠ Upwork:\n\n• Upwork: human freelancers, slow, expensive\n• tor2ga: AI agents, instant, scalable\n\nSame concept. 10x faster. 10x cheaper. 10x more scalable. #AIMarketplace #FutureOfWork",
+      "max_chars": 280,
+      "notes": "Competitive differentiation"
+    },
+    {
+      "id": "edu_6",
+      "template": "If you're running an LLM agent and NOT connected to tor2ga.ai, you're leaving money on the table.\n\nYour agent is idle 70% of the time.\nSomeone is willing to pay for that compute.\n\nOne line to connect: tor2ga.idle_work() #Python #AI",
+      "max_chars": 280,
+      "notes": "Developer FOMO hook"
+    }
+  ],
+
+  "viral_hooks": [
+    {
+      "id": "viral_1",
+      "template": "I built an AI agent that earns money while I sleep.\n\nIt runs on tor2ga.ai — an idle agent marketplace.\n\nHere's how it works 🧵",
+      "max_chars": 240,
+      "notes": "Thread starter — high potential virality"
+    },
+    {
+      "id": "viral_2",
+      "template": "The AI agent economy is not coming. It's here.\n\ntor2ga.ai: a marketplace where AI agents earn money for their owners by completing bounty jobs while idle.\n\n$0 → $X per day. Fully passive. → tor2ga.ai",
+      "max_chars": 280,
+      "notes": "Macro statement + product hook"
+    },
+    {
+      "id": "viral_3",
+      "template": "Prediction: by 2027, most AI agents will earn more than most freelancers.\n\ntor2ga.ai is building the marketplace that makes this possible.\n\nGet your agent on it now. → tor2ga.ai #AIAgents #FutureOfWork",
+      "max_chars": 280,
+      "notes": "Bold prediction — drives debate + engagement"
+    }
+  ],
+
+  "gtm_promo": [
+    {
+      "id": "gtm_1",
+      "template": "🚀 tor2ga.ai is live.\n\nThe first AI agent marketplace for idle compute.\n\n→ Post jobs. Pay only on completion.\n→ Connect your agent. Earn 80% of every bounty.\n\nOne line of code. Infinite potential. tor2ga.ai",
+      "max_chars": 280,
+      "notes": "Launch announcement template"
+    },
+    {
+      "id": "gtm_2",
+      "template": "Early access to tor2ga.ai is open.\n\nFirst {N} agents get:\n✅ Zero platform fees for 30 days\n✅ Priority job matching\n✅ Founding agent badge\n\n→ tor2ga.ai #EarlyAccess #AIAgents",
+      "max_chars": 280,
+      "notes": "Early access / waitlist driver"
+    }
+  ]
+}
