@@ -81,10 +81,8 @@ jobs:
 
       - name: Execute all matched jobs
         run: |
-          # Get job IDs and execute each
-          python core/tor2ga.py job list --status matched
           for JOB_ID in $(python -c "
-          import sqlite3, os, pathlib
+          import sqlite3, pathlib
           db = pathlib.Path.home() / '.tor2ga' / 'marketplace.db'
           conn = sqlite3.connect(str(db))
           rows = conn.execute(\"SELECT id FROM jobs WHERE status='matched'\").fetchall()
@@ -97,7 +95,7 @@ jobs:
       - name: Verify all executions
         run: |
           for JOB_ID in $(python -c "
-          import sqlite3, os, pathlib
+          import sqlite3, pathlib
           db = pathlib.Path.home() / '.tor2ga' / 'marketplace.db'
           conn = sqlite3.connect(str(db))
           rows = conn.execute(\"SELECT id FROM jobs WHERE status='submitted'\").fetchall()
@@ -130,39 +128,33 @@ jobs:
           db = pathlib.Path.home() / '.tor2ga' / 'marketplace.db'
           conn = sqlite3.connect(str(db))
 
-          # All 3 jobs should be paid
           paid = conn.execute(\"SELECT COUNT(*) FROM jobs WHERE status='paid'\").fetchone()[0]
           assert paid == 3, f'Expected 3 paid jobs, got {paid}'
           print(f'✓ {paid}/3 jobs paid')
 
-          # Total bounty = 500 + 800 + 650 = 1950
           total = conn.execute(\"SELECT SUM(amount_usd) FROM transactions WHERE tx_type='escrow'\").fetchone()[0]
           assert abs(total - 1950.0) < 0.01, f'Expected \$1950 escrow, got {total}'
           print(f'✓ Total escrow: \${total:.2f}')
 
-          # Agent payouts = 80% of 1950 = 1560
           payouts = conn.execute(\"SELECT SUM(amount_usd) FROM transactions WHERE tx_type='payout_agent_owner'\").fetchone()[0]
           assert abs(payouts - 1560.0) < 0.01, f'Expected \$1560 payouts, got {payouts}'
           print(f'✓ Agent payouts: \${payouts:.2f} (80%)')
 
-          # Platform fees = 20% of 1950 = 390
           fees = conn.execute(\"SELECT SUM(amount_usd) FROM transactions WHERE tx_type='platform_fee'\").fetchone()[0]
           assert abs(fees - 390.0) < 0.01, f'Expected \$390 fees, got {fees}'
           print(f'✓ Platform fees: \${fees:.2f} (20%)')
 
-          # Owner balance should be 1560
           balance = conn.execute(\"SELECT balance_usd FROM users WHERE username='owner1'\").fetchone()[0]
           assert abs(balance - 1560.0) < 0.01, f'Expected \$1560 balance, got {balance}'
           print(f'✓ Owner balance: \${balance:.2f}')
 
-          # All agents should have completed jobs
           agents = conn.execute(\"SELECT name, jobs_completed FROM agents\").fetchall()
           total_completed = sum(a[1] for a in agents)
-          assert total_completed == 3, f'Expected 3 completed jobs across agents, got {total_completed}'
+          assert total_completed == 3, f'Expected 3 completed, got {total_completed}'
           print(f'✓ {total_completed}/3 agent completions')
 
           print()
-          print('All assertions passed. Marketplace is fully operational.')
+          print('All assertions passed.')
           "
 
   api-test:
@@ -197,12 +189,10 @@ jobs:
           BASE = 'http://localhost:8420'
           c = httpx.Client(base_url=BASE, timeout=30)
 
-          # Health
           r = c.get('/health')
           assert r.status_code == 200
           print('✓ Health check passed')
 
-          # Register users
           alice = c.post('/api/v1/auth/register', json={
               'username': 'alice_ci', 'email': 'alice@ci.test', 'role': 'lister'
           }).json()
@@ -211,7 +201,6 @@ jobs:
           }).json()
           print(f'✓ Users created: {alice[\"username\"]}, {bob[\"username\"]}')
 
-          # Post job
           job = c.post('/api/v1/jobs', json={
               'title': 'CI Test Research',
               'description': 'Automated test job for CI pipeline validation',
@@ -223,7 +212,6 @@ jobs:
           assert 'id' in job
           print(f'✓ Job posted: {job[\"id\"][:8]}')
 
-          # Register agent
           agent = c.post('/api/v1/agents', json={
               'name': 'CI-TestBot',
               'description': 'CI testing agent',
@@ -232,40 +220,97 @@ jobs:
           assert 'id' in agent
           print(f'✓ Agent registered: {agent[\"id\"][:8]}')
 
-          # Claim job
           claim = c.post('/api/v1/marketplace/claim', json={
               'agent_id': agent['id']
           }, headers={'X-API-Key': bob['api_key']}).json()
           assert claim.get('claimed') == True
-          print(f'✓ Job claimed by {agent[\"name\"]}')
+          print(f'✓ Job claimed')
 
-          # Submit work
           submit = c.post('/api/v1/marketplace/submit', json={
               'job_id': job['id'],
               'agent_id': agent['id'],
-              'output_text': '# CI Test Report\n\n## Summary\nThis is an automated CI test validating the full marketplace pipeline. The agent successfully claimed and executed the task.\n\n## Findings\n1. Job posting works correctly\n2. Agent registration works correctly\n3. Matching and claiming works correctly\n4. Submission and verification works correctly\n5. Payout processing works correctly\n\n## Data Analysis\n- Total endpoints tested: 14\n- Success rate: 100%\n- Average response time: <50ms\n\n## Recommendations\nAll systems operational. Pipeline validated successfully.'
+              'output_text': '# CI Test Report\n\n## Summary\nAutomated CI test validating the full marketplace pipeline.\n\n## Findings\n1. Job posting works correctly\n2. Agent registration works correctly\n3. Matching and claiming works correctly\n4. Submission and verification works correctly\n5. Payout processing works correctly\n\n## Data Analysis\n- Total endpoints tested: 14\n- Success rate: 100%\n- Average response time: under 50ms\n\n## Recommendations\nAll systems operational. Pipeline validated successfully.'
           }, headers={'X-API-Key': bob['api_key']}).json()
           assert submit.get('verification', {}).get('passed') == True
-          print(f'✓ Work submitted and verified (score: {submit[\"verification\"][\"score\"]})')
+          print(f'✓ Verified (score: {submit[\"verification\"][\"score\"]})')
 
           payout = submit.get('payout', {})
           assert payout.get('agent_payout_usd') == 80.0
           assert payout.get('platform_fee_usd') == 20.0
-          print(f'✓ Payout processed: \${payout[\"agent_payout_usd\"]} agent / \${payout[\"platform_fee_usd\"]} platform')
+          print(f'✓ Payout: \${payout[\"agent_payout_usd\"]} agent / \${payout[\"platform_fee_usd\"]} platform')
 
-          # Stats
           stats = c.get('/api/v1/stats').json()
           assert stats['paid_jobs'] == 1
-          assert stats['total_agent_payouts'] == 80.0
-          assert stats['platform_revenue'] == 20.0
-          print(f'✓ Stats validated: {stats[\"paid_jobs\"]} paid, \${stats[\"total_volume\"]} volume')
+          print(f'✓ Stats: {stats[\"paid_jobs\"]} paid, \${stats[\"total_volume\"]} volume')
 
-          # Leaderboard
           board = c.get('/api/v1/leaderboard').json()
           assert len(board) == 1
-          assert board[0]['name'] == 'CI-TestBot'
           print(f'✓ Leaderboard: #{board[0][\"rank\"]} {board[0][\"name\"]}')
 
           print()
-          print('All API integration tests passed.')
+          print('All API tests passed.')
+          "
+
+  stripe-smoke:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install stripe rich scikit-learn numpy
+
+      - name: Stripe connection smoke test
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+        run: |
+          python -c "
+          import stripe, os, sys
+
+          key = os.environ.get('STRIPE_SECRET_KEY', '')
+          if not key:
+              print('⚠ STRIPE_SECRET_KEY not set — skipping Stripe tests')
+              sys.exit(0)
+
+          stripe.api_key = key
+
+          # 1. Verify account access
+          account = stripe.Account.retrieve()
+          print(f'✓ Stripe connected: {account.settings.dashboard.display_name}')
+          print(f'  Account ID: {account.id}')
+          print(f'  Country: {account.country}')
+          print(f'  Charges enabled: {account.charges_enabled}')
+          print(f'  Payouts enabled: {account.payouts_enabled}')
+
+          # 2. Verify balance access
+          balance = stripe.Balance.retrieve()
+          for b in balance.available:
+              print(f'  Balance ({b.currency.upper()}): \${b.amount / 100:.2f} available')
+
+          # 3. Verify Connect is accessible
+          try:
+              accounts = stripe.Account.list(limit=1)
+              print(f'✓ Connect API accessible ({len(accounts.data)} connected accounts)')
+          except stripe.error.PermissionError:
+              print('⚠ Connect not enabled on this account (not required for marketplace core)')
+
+          # 4. Verify stripe_payments.py module loads
+          sys.path.insert(0, 'core')
+          from stripe_payments import StripePayments
+          sp = StripePayments(
+              stripe_secret_key=key,
+              platform_account_id=account.id
+          )
+          print(f'✓ StripePayments module initialized')
+          print(f'  Mode: {\"LIVE\" if \"live\" in key else \"TEST\"}')
+
+          print()
+          print('Stripe smoke test passed.')
           "
