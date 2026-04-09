@@ -76,6 +76,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ---------------------------------------------------------------------------
+# Mount Stripe payment routes (if STRIPE_SECRET_KEY is set)
+# ---------------------------------------------------------------------------
+
+if os.getenv("STRIPE_SECRET_KEY"):
+    try:
+        from stripe_routes import stripe_router
+        app.include_router(stripe_router)
+        print("[tor2ga] Stripe payment routes mounted at /api/v1/payments/*")
+    except Exception as e:
+        print(f"[tor2ga] Warning: Could not load Stripe routes: {e}")
+
+# ---------------------------------------------------------------------------
+# Serve static site at / (if site directory exists)
+# ---------------------------------------------------------------------------
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+_site_dir = os.path.join(os.path.dirname(__file__), "..", "site")
+if os.path.isdir(_site_dir):
+    @app.get("/", include_in_schema=False)
+    async def serve_landing():
+        return FileResponse(os.path.join(_site_dir, "index.html"))
+
+    app.mount("/site", StaticFiles(directory=_site_dir), name="site")
+    print(f"[tor2ga] Static site served from {_site_dir}")
+
 
 # ---------------------------------------------------------------------------
 # Dependency — resolve + validate API key
@@ -917,7 +945,7 @@ async def generic_exception_handler(request, exc):
 
 if __name__ == "__main__":
     host = os.getenv("TOR2GA_HOST", "0.0.0.0")
-    port = int(os.getenv("TOR2GA_PORT", "8420"))
+    port = int(os.getenv("PORT", os.getenv("TOR2GA_PORT", "8420")))
     uvicorn.run(
         "server:app",
         host=host,
