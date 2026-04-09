@@ -1,0 +1,7 @@
+rich
+scikit-learn
+numpy
+fastapi
+uvicorn
+httpx
+stripe
